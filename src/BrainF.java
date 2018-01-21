@@ -1,9 +1,12 @@
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -61,7 +64,18 @@ public class BrainF extends Application {
         textEditor = new HBox();
 
         TextArea textArea = new TextArea();
+        textArea.setFont(Font.font("Verdana", FontWeight.NORMAL, 20));
+
         VBox lineNumbers = new VBox();
+        for(int i = 1; i < 21; i++){
+            TextField number = new TextField(String.valueOf(i));
+            number.setDisable(true);
+            number.setMaxWidth(50);
+            number.setAlignment(Pos.CENTER_RIGHT);
+            lineNumbers.getChildren().add(number);
+        }
+
+        textEditor.getChildren().addAll(lineNumbers, textArea);
     }
 
     public void createTerminal(){
