@@ -11,6 +11,9 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
 
 
 public class BrainF extends Application {
@@ -19,34 +22,12 @@ public class BrainF extends Application {
     private BorderPane borderPane;
     private MenuBar menuBar;
     private ToolBar toolbar;
-    private HBox textEditor;
+    private VirtualizedScrollPane textEditor;
     private TextArea terminal;
 
     // Methods
     public void createBorderPane(){
         borderPane = new BorderPane();
-    }
-
-    public void createMenuBar(){
-        menuBar = new MenuBar();
-
-        // Create MenuBar Content
-        Menu file = new Menu("File");
-        MenuItem newFile = new MenuItem("New");
-        MenuItem open = new MenuItem("Open");
-        MenuItem save = new MenuItem("Save");
-        file.getItems().addAll(newFile, open, save);
-
-        Menu edit = new Menu("Edit");
-        // Edit Menu Items
-
-        Menu run = new Menu("Run");
-        MenuItem runProgram = new MenuItem("Run");
-        MenuItem debug = new MenuItem("Debug");
-        run.getItems().addAll(runProgram, debug);
-
-        // Add MenuBar Content to the MenuBar
-        menuBar.getMenus().addAll(file, edit, run);
     }
 
     public void createToolbar(){
@@ -62,25 +43,22 @@ public class BrainF extends Application {
     }
 
     public void createTextEditor(){
-        textEditor = new HBox();
+        CodeArea codeArea = new CodeArea();
+        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 
-        TextArea textArea = new TextArea();
-        textArea.setFont(Font.font("Verdana", FontWeight.NORMAL, 20));
+        textEditor = new VirtualizedScrollPane<>(codeArea);
+        textEditor.setMinWidth(600);
+        textEditor.setMaxWidth(600);
+    }
 
-        VBox lineNumbers = new VBox();
-        for(int i = 1; i < 21; i++){
-            TextField number = new TextField(String.valueOf(i));
-            number.setDisable(true);
-            number.setMaxWidth(50);
-            number.setAlignment(Pos.CENTER_RIGHT);
-            lineNumbers.getChildren().add(number);
-        }
-
-        textEditor.getChildren().addAll(lineNumbers, textArea);
+    public void createMenuBar(){
+        menuBar = MenuBarActions.createMenuBar();
     }
 
     public void createTerminal(){
         terminal = new Terminal();
+        terminal.setMinWidth(300);
+        terminal.setMaxWidth(300);
         terminal.setText(">>>\n");
     }
 
@@ -108,10 +86,11 @@ public class BrainF extends Application {
         Scene scene = new Scene(borderPane);
 
         // Define the Stage
-        primaryStage.setMinWidth(600);
-        primaryStage.setMinHeight(800);
+        primaryStage.setMinWidth(900);
+        primaryStage.setMinHeight(900);
         primaryStage.setScene(scene);
         primaryStage.setTitle("[INSERT FILE NAME] - Brain F IDE");
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 }
