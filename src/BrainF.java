@@ -30,28 +30,6 @@ public class BrainF extends Application {
         borderPane = new BorderPane();
     }
 
-    public void createMenuBar(){
-        menuBar = new MenuBar();
-
-        // Create MenuBar Content
-        Menu file = new Menu("File");
-        MenuItem newFile = new MenuItem("New");
-        MenuItem open = new MenuItem("Open");
-        MenuItem save = new MenuItem("Save");
-        file.getItems().addAll(newFile, open, save);
-
-        Menu edit = new Menu("Edit");
-        // Edit Menu Items
-
-        Menu run = new Menu("Run");
-        MenuItem runProgram = new MenuItem("Run");
-        MenuItem debug = new MenuItem("Debug");
-        run.getItems().addAll(runProgram, debug);
-
-        // Add MenuBar Content to the MenuBar
-        menuBar.getMenus().addAll(file, edit, run);
-    }
-
     public void createToolbar(){
         toolbar = new ToolBar();
 
@@ -71,6 +49,10 @@ public class BrainF extends Application {
         textEditor = new VirtualizedScrollPane<>(codeArea);
         textEditor.setMinWidth(600);
         textEditor.setMaxWidth(600);
+    }
+
+    public void createMenuBar(){
+        menuBar = MenuBarActions.createMenuBar();
     }
 
     public void createTerminal(){
