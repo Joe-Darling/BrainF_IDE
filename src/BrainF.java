@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -79,7 +80,8 @@ public class BrainF extends Application {
     }
 
     public void createTerminal(){
-        terminal = new TextArea();
+        terminal = new Terminal();
+        terminal.setText(">>>\n");
     }
 
     // Main
