@@ -22,6 +22,7 @@ public class BrainF extends Application {
     private BorderPane borderPane;
     private MenuBar menuBar;
     private ToolBar toolbar;
+    private CodeArea editor;
     private VirtualizedScrollPane textEditor;
     private TextArea terminal;
 
@@ -45,14 +46,15 @@ public class BrainF extends Application {
     public void createTextEditor(){
         CodeArea codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-
+        editor = codeArea;
         textEditor = new VirtualizedScrollPane<>(codeArea);
         textEditor.setMinWidth(600);
         textEditor.setMaxWidth(600);
     }
 
-    public void createMenuBar(){
-        menuBar = MenuBarActions.createMenuBar();
+    public void createMenuBar(Stage primaryStage){
+        BrainFMenuBar brainFMenuBar = new BrainFMenuBar(primaryStage, editor, terminal);
+        menuBar = brainFMenuBar.createMenuBar();
     }
 
     public void createTerminal(){
@@ -71,13 +73,13 @@ public class BrainF extends Application {
     public void start(Stage primaryStage) {
         // Initialize
         createBorderPane();
-        createMenuBar();
-        createToolbar();
+        //createToolbar();
         createTextEditor();
         createTerminal();
+        createMenuBar(primaryStage);
 
         VBox vbox = new VBox();
-        vbox.getChildren().addAll(menuBar, toolbar);
+        vbox.getChildren().addAll(menuBar);
 
         borderPane.setTop(vbox);
         borderPane.setLeft(textEditor);
