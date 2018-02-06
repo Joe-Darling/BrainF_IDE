@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -46,7 +47,12 @@ public class BrainF extends Application {
     public void createTextEditor(){
         CodeArea codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        // On key press setTextModified to True
+        codeArea.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                menuBar.setCodeModified(true);
+            }
+        });
         editor = codeArea;
         textEditor = new VirtualizedScrollPane<>(codeArea);
         textEditor.setMinWidth(600);
