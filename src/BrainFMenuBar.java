@@ -131,8 +131,9 @@ public class BrainFMenuBar {
     }
 
     private void runFile(){
+        terminal.clear();
+        terminal.appendText(">>>\n");
         Interpreter interpreter = new Interpreter(terminal, Integer.MAX_VALUE, editor.getText());
         interpreter.run();
-        System.out.println("Hello cuck");
     }
 }
