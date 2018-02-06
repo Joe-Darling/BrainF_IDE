@@ -36,6 +36,7 @@ public class Interpreter {
 
         // We run the code through the parser to strip all non legal characters first
         this.code = parser(code);
+        System.out.println(this.code);
     }
 
     public ExecutionResult run(){
@@ -83,7 +84,7 @@ public class Interpreter {
                 }
                 break;
             case '-':
-                array.set(pointer, (char)(array.get(pointer) + 1));
+                array.set(pointer, (char)(array.get(pointer) - 1));
                 if(array.get(pointer) < -valueCap){
                     codeBroken = true;
                     message = VALUE_CAP_EXCEEDED;
@@ -128,7 +129,7 @@ public class Interpreter {
         ArrayList<Character> chars = new ArrayList<Character>(Arrays.asList('<', '>', '+', '-', '.', ',', '[', ']'));
         String result = "";
         for(char c : code.toCharArray()){
-            if(!chars.contains(c)){
+            if(chars.contains(c)){
                 result += c;
             }
         }
