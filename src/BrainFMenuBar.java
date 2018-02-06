@@ -24,10 +24,10 @@ public class BrainFMenuBar {
 
     private Stage stage;
     private CodeArea editor;
-    private TextArea terminal;
+    private Terminal terminal;
     private Boolean codeModified; // if editor has been modified
 
-    public BrainFMenuBar(Stage primaryStage, CodeArea textEditor, TextArea terminal){
+    public BrainFMenuBar(Stage primaryStage, CodeArea textEditor, Terminal terminal){
         stage = primaryStage;
         editor = textEditor;
         this.terminal = terminal;

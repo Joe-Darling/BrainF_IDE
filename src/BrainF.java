@@ -24,7 +24,7 @@ public class BrainF extends Application {
     private ToolBar toolbar;
     private CodeArea editor;
     private VirtualizedScrollPane textEditor;
-    private TextArea terminal;
+    private Terminal terminal;
 
     // Methods
     public void createBorderPane(){
