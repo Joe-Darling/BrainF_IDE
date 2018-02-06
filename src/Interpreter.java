@@ -10,47 +10,63 @@ import java.util.List;
  */
 public class Interpreter {
 
+    private final String OKAY_STATUS = "OK";
+    private final String PROMPT_INPUT = "IN";
     private final String INDEX_OUT_OF_BOUNDS = "You indexed out of bounds.";
     private final String VALUE_CAP_EXCEEDED = "You have exceeded the value cap for a cell. You can change this in the" +
             "settings";
 
-    private TextArea output;
+    private TextArea terminal;
     private int valueCap;
 
-    public Interpreter(TextArea output, int valueCap){
-        this.output = output;
+    private int pointer;
+    private int charReader;
+    private char currCommand;
+    List<Integer> loops;
+    List<Character> array = new ArrayList<>(Collections.singletonList((char)0));
+    String code;
+
+    public Interpreter(TextArea terminal, int valueCap, String code){
+        this.terminal = terminal;
         this.valueCap = valueCap;
+
+        pointer = 0;
+        charReader = 0;
+        loops = new ArrayList<>();
+
+        // We run the code through the parser to strip all non legal characters first
+        this.code = parser(code);
     }
 
-    public int interpret(String code){
-        // First we strip all non-legal characters.
-        code = parser(code);
-
-        List<Integer> loops = new ArrayList<>();
-        List<Character> array = new ArrayList<>(Collections.singletonList((char) 0));
-        int pointer = 0;
-        int charReader = 0;
-        char c;
-
+    public ExecutionResult run(){
         while(charReader < code.length()){
-            c = code.charAt(charReader);
-
+            currCommand = code.charAt(charReader);
+            ExecutionResult result = executeCommand(currCommand);
+            if(result.codeBroken() || result.getMessage().equals(PROMPT_INPUT)) {
+                return result;
+            }
+            charReader++;
         }
-        return 0;
+        return new ExecutionResult(pointer, charReader, false, OKAY_STATUS);
     }
 
+    public void getInput(){
+        char c = terminal.getText().charAt(terminal.getText().length() - 1);
+        array.set(pointer, c);
+        charReader++;
+        run();
+    }
 
-    private ExecutionResult executeCommand(char command, List<Character> array, int pointer, List<Integer> loops,
-                                           String code, int charPointer){
+    private ExecutionResult executeCommand(char command){
         boolean codeBroken = false;
-        String failMessage = "";
+        String message = "";
 
         switch(command){
             case '<':
                 pointer -= 1;
                 if(pointer < 0){
                     codeBroken = true;
-                    failMessage = INDEX_OUT_OF_BOUNDS;
+                    message = INDEX_OUT_OF_BOUNDS;
                 }
                 break;
             case '>':
@@ -63,35 +79,35 @@ public class Interpreter {
                 array.set(pointer, (char)(array.get(pointer) + 1));
                 if(array.get(pointer) > valueCap){
                     codeBroken = true;
-                    failMessage = VALUE_CAP_EXCEEDED;
+                    message = VALUE_CAP_EXCEEDED;
                 }
                 break;
             case '-':
                 array.set(pointer, (char)(array.get(pointer) + 1));
                 if(array.get(pointer) < -valueCap){
                     codeBroken = true;
-                    failMessage = VALUE_CAP_EXCEEDED;
+                    message = VALUE_CAP_EXCEEDED;
                 }
                 break;
             case '.':
-                output.appendText(array.get(pointer).toString());
+                terminal.appendText(array.get(pointer).toString());
                 break;
             case ',':
-                // TODO: Implement me lul
+                message = PROMPT_INPUT;
                 break;
             case '[':
                 if(array.get(pointer) != 0){
-                    loops.add(charPointer);
+                    loops.add(charReader);
                 }
                 else{
-                    while(code.charAt(charPointer) == ']'){
-                        charPointer++;
+                    while(code.charAt(charReader) == ']'){
+                        charReader++;
                     }
                 }
                 break;
             case ']':
                 if(array.get(pointer) != 0){
-                    charPointer = loops.get(loops.size() - 1);
+                    charReader = loops.get(loops.size() - 1);
                 }
                 else{
                     loops.remove(loops.get(loops.size()-1));
@@ -99,7 +115,7 @@ public class Interpreter {
                 break;
         }
 
-        return new ExecutionResult(pointer, charPointer, codeBroken, failMessage);
+        return new ExecutionResult(pointer, charReader, codeBroken, message);
     }
 
     /**
@@ -119,5 +135,4 @@ public class Interpreter {
 
         return result;
     }
-
 }
