@@ -20,7 +20,7 @@ public class BrainF extends Application {
 
     // Fields
     private BorderPane borderPane;
-    private MenuBar menuBar;
+    private BrainFMenuBar menuBar;
     private ToolBar toolbar;
     private CodeArea editor;
     private VirtualizedScrollPane textEditor;
@@ -46,6 +46,7 @@ public class BrainF extends Application {
     public void createTextEditor(){
         CodeArea codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+        // On key press setTextModified to True
         editor = codeArea;
         textEditor = new VirtualizedScrollPane<>(codeArea);
         textEditor.setMinWidth(600);
@@ -53,8 +54,7 @@ public class BrainF extends Application {
     }
 
     public void createMenuBar(Stage primaryStage){
-        BrainFMenuBar brainFMenuBar = new BrainFMenuBar(primaryStage, editor, terminal);
-        menuBar = brainFMenuBar.createMenuBar();
+        menuBar = new BrainFMenuBar(primaryStage, editor, terminal);
     }
 
     public void createTerminal(){
@@ -79,7 +79,7 @@ public class BrainF extends Application {
         createMenuBar(primaryStage);
 
         VBox vbox = new VBox();
-        vbox.getChildren().addAll(menuBar);
+        vbox.getChildren().addAll(menuBar.createMenuBar());
 
         borderPane.setTop(vbox);
         borderPane.setLeft(textEditor);
@@ -91,7 +91,7 @@ public class BrainF extends Application {
         primaryStage.setMinWidth(900);
         primaryStage.setMinHeight(900);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("[INSERT FILE NAME] - Brain F IDE");
+        primaryStage.setTitle("[INSERT FILE NAME] - BrainF IDE");
         primaryStage.setResizable(false);
         primaryStage.show();
     }
