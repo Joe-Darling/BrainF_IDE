@@ -6,13 +6,13 @@ public class ExecutionResult {
     private boolean codeBroken;
     private int pointer;
     private int charReader;
-    private String failureMessage;
+    private String message;
 
-    public ExecutionResult(int pointer, int charReader, boolean codeBroken, String failureMessage){
+    public ExecutionResult(int pointer, int charReader, boolean codeBroken, String message){
         this.pointer = pointer;
         this.charReader = charReader;
         this.codeBroken = codeBroken;
-        this.failureMessage = failureMessage;
+        this.message = message;
     }
 
     public int getPointer(){
@@ -23,11 +23,11 @@ public class ExecutionResult {
         return charReader;
     }
 
-    public boolean isCodeBroken(){
+    public boolean codeBroken(){
         return codeBroken;
     }
 
-    public String getFailureMessage(){
-        return failureMessage;
+    public String getMessage(){
+        return message;
     }
 }
