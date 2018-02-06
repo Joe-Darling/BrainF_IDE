@@ -18,16 +18,14 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 public class BrainFMenuBar {
 
     private Stage stage;
     private CodeArea editor;
     private TextArea terminal;
+    private Boolean codeModified; // if editor has been modified
 
     public BrainFMenuBar(Stage primaryStage, CodeArea textEditor, TextArea terminal){
         stage = primaryStage;
@@ -35,22 +33,34 @@ public class BrainFMenuBar {
         this.terminal = terminal;
     }
 
+    public Boolean getCodeModified(){
+        return codeModified;
+    }
+
+    public void setCodeModified(Boolean bool){
+        codeModified = bool;
+    }
+
     public MenuBar createMenuBar(){
         MenuBar menuBar = new MenuBar();
 
-        // Create MenuBar Content
+        // FILE
         Menu file = new Menu("File");
         MenuItem newFile = new MenuItem("New");
+        newFile.setOnAction(event -> newFile());
         MenuItem open = new MenuItem("Open");
         open.setOnAction(event -> openFile());
         MenuItem save = new MenuItem("Save");
+        save.setOnAction(event -> saveFile());
         file.getItems().addAll(newFile, open, save);
 
+        // EDIT
         Menu edit = new Menu("Edit");
-        // Edit Menu Items
 
+        // RUN
         Menu run = new Menu("Run");
         MenuItem runProgram = new MenuItem("Run");
+        runProgram.setOnAction(event -> runFile());
         MenuItem debug = new MenuItem("Debug");
         run.getItems().addAll(runProgram, debug);
 
@@ -59,18 +69,30 @@ public class BrainFMenuBar {
         return menuBar;
     }
 
+    // Change name later
+    private void codeCheck(){
+        // check codeModified
+            // if text is modified, ask if they would like to save
+            //
+    }
+
+    private void newFile(){
+        //codeCheck()
+        editor.clear();
+    }
+
     private void openFile(){
-        // Check if save is needed first here
+        //codeCheck()
 
         FileChooser fileChooser = new FileChooser();
-        File f = fileChooser.showOpenDialog(stage);
+        File file = fileChooser.showOpenDialog(stage);
         int i;
         final int EOF = -1;
 
-        if(f != null){
+        if(file != null){
             // get file type here.
             try {
-                InputStream iStream = new FileInputStream(f);
+                InputStream iStream = new FileInputStream(file);
                 String text = "";
                 while((i = iStream.read()) != EOF){
                     char c = (char) i;
@@ -83,5 +105,34 @@ public class BrainFMenuBar {
                 System.out.println("Error: " + e.getMessage());
             }
         }
+    }
+
+    private void saveFile(){
+        // if file is untitled, then save the file
+
+        FileChooser fileChooser = new FileChooser();
+
+        //Set extension filter
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("BrainF (*.bs)", "*.bs");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        //Show save file dialog
+        File file = fileChooser.showSaveDialog(stage);
+
+        if(file != null){
+            try {
+                FileWriter fileWriter = new FileWriter(file);
+                fileWriter.write(editor.getText());
+                fileWriter.close();
+            } catch (IOException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+        }
+    }
+
+    private void runFile(){
+        Interpreter interpreter = new Interpreter(terminal, Integer.MAX_VALUE, editor.getText());
+        interpreter.run();
+        System.out.println("Hello cuck");
     }
 }
