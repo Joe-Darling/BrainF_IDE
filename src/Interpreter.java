@@ -16,7 +16,7 @@ public class Interpreter {
     private final String VALUE_CAP_EXCEEDED = "You have exceeded the value cap for a cell. You can change this in the" +
             "settings";
 
-    private TextArea terminal;
+    private Terminal terminal;
     private int valueCap;
 
     private int pointer;
@@ -26,7 +26,7 @@ public class Interpreter {
     List<Character> array = new ArrayList<>(Collections.singletonList((char)0));
     String code;
 
-    public Interpreter(TextArea terminal, int valueCap, String code){
+    public Interpreter(Terminal terminal, int valueCap, String code){
         this.terminal = terminal;
         this.valueCap = valueCap;
 
@@ -36,7 +36,6 @@ public class Interpreter {
 
         // We run the code through the parser to strip all non legal characters first
         this.code = parser(code);
-        System.out.println(this.code);
     }
 
     public ExecutionResult run(){
