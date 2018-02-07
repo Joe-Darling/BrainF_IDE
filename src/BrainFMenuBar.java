@@ -133,7 +133,7 @@ public class BrainFMenuBar {
     private void runFile(){
         terminal.clear();
         terminal.appendText(">>>\n");
-        Interpreter interpreter = new Interpreter(terminal, Integer.MAX_VALUE, editor.getText());
+        Interpreter interpreter = new Interpreter(terminal, 1000, editor.getText());
         interpreter.run();
     }
 }
