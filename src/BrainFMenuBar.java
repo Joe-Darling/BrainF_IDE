@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
@@ -22,19 +23,25 @@ import java.io.*;
 
 public class BrainFMenuBar {
 
+    private final String TITLE = " - BrainF IDE";
+
     private Stage stage;
     private CodeArea editor;
     private Terminal terminal;
     private Boolean codeModified; // if editor has been modified
+    private SavePrompt savePrompt;
+    private File currentFile;
 
     public BrainFMenuBar(Stage primaryStage, CodeArea textEditor, Terminal terminal){
         stage = primaryStage;
         editor = textEditor;
         this.terminal = terminal;
+        savePrompt = new SavePrompt(this, stage);
+        codeModified = false;
     }
 
-    public Boolean getCodeModified(){
-        return codeModified;
+    public File getCurrentFile(){
+        return currentFile;
     }
 
     public void setCodeModified(Boolean bool){
@@ -47,12 +54,14 @@ public class BrainFMenuBar {
         // FILE
         Menu file = new Menu("File");
         MenuItem newFile = new MenuItem("New");
-        newFile.setOnAction(event -> newFile());
+        newFile.setOnAction(event -> menuTab(SavePrompt.MenuOptions.FILE));
         MenuItem open = new MenuItem("Open");
-        open.setOnAction(event -> openFile());
+        open.setOnAction(event -> menuTab(SavePrompt.MenuOptions.OPEN));
         MenuItem save = new MenuItem("Save");
-        save.setOnAction(event -> saveFile());
-        file.getItems().addAll(newFile, open, save);
+        save.setOnAction(event -> saveFile(currentFile));
+        MenuItem saveAs = new MenuItem("Save As");
+        saveAs.setOnAction(event -> saveAsFile());
+        file.getItems().addAll(newFile, open, save, saveAs);
 
         // EDIT
         Menu edit = new Menu("Edit");
@@ -69,20 +78,36 @@ public class BrainFMenuBar {
         return menuBar;
     }
 
-    // Change name later
-    private void codeCheck(){
-        // check codeModified
-            // if text is modified, ask if they would like to save
-            //
+    public void runFunctionality(SavePrompt.MenuOptions type){
+        switch (type) {
+            case FILE:
+                newFile();
+                break;
+            case OPEN:
+                openFile();
+                break;
+            default:
+                return;
+        }
     }
 
-    private void newFile(){
-        //codeCheck()
+    public void menuTab(SavePrompt.MenuOptions type){
+        if(!codeModified) {
+            runFunctionality(type);
+            return;
+        }
+
+        savePrompt.run(type);
+    }
+
+    public void newFile(){
         editor.clear();
+        currentFile = null;
+        setMainSceneTitle();
+        setCodeModified(false);
     }
 
-    private void openFile(){
-        //codeCheck()
+    public void openFile(){
 
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(stage);
@@ -105,9 +130,30 @@ public class BrainFMenuBar {
                 System.out.println("Error: " + e.getMessage());
             }
         }
+
+        currentFile = file;
+        setMainSceneTitle();
+        setCodeModified(false);
     }
 
-    private void saveFile(){
+    public void saveFile(File file){
+        if(file == null){
+            saveAsFile();
+            return;
+        }
+
+        try {
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(editor.getText());
+            fileWriter.close();
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        setCodeModified(false);
+    }
+
+    public void saveAsFile(){
         // if file is untitled, then save the file
 
         FileChooser fileChooser = new FileChooser();
@@ -120,20 +166,30 @@ public class BrainFMenuBar {
         File file = fileChooser.showSaveDialog(stage);
 
         if(file != null){
-            try {
-                FileWriter fileWriter = new FileWriter(file);
-                fileWriter.write(editor.getText());
-                fileWriter.close();
-            } catch (IOException e) {
-                System.out.println("Error: " + e.getMessage());
-            }
+            saveFile(file);
         }
+
+        currentFile = file;
+        setMainSceneTitle();
     }
 
-    private void runFile(){
+    public void runFile(){
         terminal.clear();
         terminal.appendText(">>>\n");
-        Interpreter interpreter = new Interpreter(terminal, Integer.MAX_VALUE, editor.getText());
+        Interpreter interpreter = new Interpreter(terminal, 1000, editor.getText());
         interpreter.run();
+    }
+
+    public String getFileName(){
+        String fileName = "Untitled";
+        if(currentFile != null){
+            fileName = currentFile.getName();
+        }
+
+        return fileName;
+    }
+
+    public void setMainSceneTitle(){
+        stage.setTitle(getFileName() + TITLE);
     }
 }
