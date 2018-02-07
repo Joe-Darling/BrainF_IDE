@@ -54,6 +54,8 @@ public class Interpreter {
         char c = terminal.getText().charAt(terminal.getText().length() - 1);
         array.set(pointer, c);
         charReader++;
+        terminal.appendText("\n");
+        terminal.setCurrMode(Terminal.Mode.STATIC);
         run();
     }
 
@@ -94,6 +96,7 @@ public class Interpreter {
                 break;
             case ',':
                 message = PROMPT_INPUT;
+                terminal.setCurrMode(Terminal.Mode.EDIT);
                 break;
             case '[':
                 if(array.get(pointer) != 0){
