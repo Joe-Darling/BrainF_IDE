@@ -100,7 +100,7 @@ public class Interpreter {
                     loops.add(charReader);
                 }
                 else{
-                    while(code.charAt(charReader) == ']'){
+                    while(code.charAt(charReader) != ']'){
                         charReader++;
                     }
                 }
