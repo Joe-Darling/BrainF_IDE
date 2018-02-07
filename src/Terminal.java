@@ -7,6 +7,7 @@ import javafx.scene.input.KeyCode;
 public class Terminal extends TextArea {
 
     private boolean inEditMode;
+    private int charsPrintedThisLine;
 
     public Terminal(){
         inEditMode = false;
@@ -32,7 +33,15 @@ public class Terminal extends TextArea {
     @Override
     public void appendText(String text){
         inEditMode = true;
-        super.appendText(text);
+        for(char c : text.toCharArray()){
+            super.appendText(String.valueOf(c));
+            charsPrintedThisLine++;
+            if(charsPrintedThisLine > 35){
+                super.appendText("\n");
+                charsPrintedThisLine = 0;
+            }
+        }
+
         inEditMode = false;
     }
 }
