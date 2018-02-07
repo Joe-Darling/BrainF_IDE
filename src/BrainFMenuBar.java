@@ -23,16 +23,18 @@ import java.io.*;
 
 public class BrainFMenuBar {
 
-    private final String TITLE = " - BrainF IDE";
+    // Fields
+    private final String TITLE = " - BrainF IDE"; // the text for the display on top of the IDE window
 
-    private Stage stage;
-    private CodeArea editor;
-    private Terminal terminal;
+    private Stage stage; // the main stage for the IDE
+    private CodeArea editor; // the area in which the user codes in
+    private Terminal terminal; // the textarea where the interpreter outputs information to
     private Boolean codeModified; // if editor has been modified
-    private SavePrompt savePrompt;
-    private File currentFile;
-    private Interpreter interpreter;
+    private SavePrompt savePrompt; // the popup box that prompts the user to save when using a feature
+    private File currentFile; // the current file the user is working in
+    private Interpreter interpreter; // the interpreter for the language BrainF
 
+    // Constructor
     public BrainFMenuBar(Stage primaryStage, CodeArea textEditor, Terminal terminal){
         stage = primaryStage;
         editor = textEditor;
@@ -41,22 +43,33 @@ public class BrainFMenuBar {
         codeModified = false;
     }
 
+    // Methods
+
     public File getCurrentFile(){
         return currentFile;
-    }
-
-    public void setCodeModified(Boolean bool){
-        codeModified = bool;
-    }
-
-    public void setMainSceneTitle(){
-        stage.setTitle(getFileName() + TITLE);
     }
 
     public Interpreter getInterpreter(){
         return interpreter;
     }
 
+    public void setCodeModified(Boolean bool){
+        codeModified = bool;
+    }
+
+    /**
+     * Sets the Title for the Scene on top of the window so the user knows which file
+     * they are currently working in.
+     */
+    public void setMainSceneTitle(){
+        stage.setTitle(getFileName() + TITLE);
+    }
+
+    /**
+     * The main method for creating the menu bar for the IDE. It creates the MenuItems for
+     * each tab and sets the OnAction events to occur when clicked.
+     * @return the finalized menu bar
+     */
     public MenuBar createMenuBar(){
         MenuBar menuBar = new MenuBar();
 
@@ -87,6 +100,10 @@ public class BrainFMenuBar {
         return menuBar;
     }
 
+    /**
+     * runs a specific functionality for various MenuItems
+     * @param type
+     */
     public void runFunctionality(SavePrompt.MenuOptions type){
         switch (type) {
             case FILE:
@@ -100,6 +117,12 @@ public class BrainFMenuBar {
         }
     }
 
+    /**
+     * Used as an intermidiary between clicking on a tab and executing the proper functionality.
+     * Checks to see if the user has modified the code before executing the desired action.
+     * Prompts the user to save if they haven't.
+     * @param type
+     */
     public void menuTab(SavePrompt.MenuOptions type){
         if(!codeModified) {
             runFunctionality(type);
@@ -109,6 +132,9 @@ public class BrainFMenuBar {
         savePrompt.run(type);
     }
 
+    /**
+     * Creates a new file by wiping the text editor.
+     */
     public void newFile(){
         editor.clear();
         currentFile = null;
@@ -116,6 +142,9 @@ public class BrainFMenuBar {
         setCodeModified(false);
     }
 
+    /**
+     * Opens a file and appends the text inside of the text editor.
+     */
     public void openFile(){
 
         FileChooser fileChooser = new FileChooser();
@@ -123,6 +152,8 @@ public class BrainFMenuBar {
         int i;
         final int EOF = -1;
 
+        // checks to see if the file is null or not. if so, it will
+        // append the code of editor.
         if(file != null){
             // get file type here.
             try {
@@ -140,17 +171,24 @@ public class BrainFMenuBar {
             }
         }
 
+        // sets the new current file
         currentFile = file;
         setMainSceneTitle();
         setCodeModified(false);
     }
 
+    /**
+     * The functionality for saving a file. If the file is null, it will prompt
+     * the Save As method instead.
+     * @param file
+     */
     public void saveFile(File file){
         if(file == null){
             saveAsFile();
             return;
         }
 
+        // writes the modified text to the current file.
         try {
             FileWriter fileWriter = new FileWriter(file);
             fileWriter.write(editor.getText());
@@ -162,6 +200,9 @@ public class BrainFMenuBar {
         setCodeModified(false);
     }
 
+    /**
+     * Saves the current text inside of the editor to a file.
+     */
     public void saveAsFile(){
         // if file is untitled, then save the file
 
@@ -182,6 +223,9 @@ public class BrainFMenuBar {
         setMainSceneTitle();
     }
 
+    /**
+     * Interprets the code and outputs the results in the terminal window.
+     */
     public void runFile(){
         terminal.clear();
         terminal.appendText(">>>\n");
@@ -189,6 +233,11 @@ public class BrainFMenuBar {
         interpreter.run();
     }
 
+    /**
+     * Gets the filename for the currentFile. If the currentFile is null, it will output
+     * as "Untitled".
+     * @return
+     */
     public String getFileName(){
         String fileName = "Untitled";
         if(currentFile != null){
