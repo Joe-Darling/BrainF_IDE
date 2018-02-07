@@ -6,6 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -27,6 +29,10 @@ public class BrainF extends Application {
     private VirtualizedScrollPane textEditor;
     private Terminal terminal;
 
+    final private KeyCombination newShortcut = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);
+    final private KeyCombination openShortcut = new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN);
+    final private KeyCombination saveShortcut = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
+
     // Methods
     public void createBorderPane(){
         borderPane = new BorderPane();
@@ -47,11 +53,8 @@ public class BrainF extends Application {
     public void createTextEditor(){
         CodeArea codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        codeArea.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                menuBar.setCodeModified(true);
-            }
+        codeArea.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            menuBar.setCodeModified(true);
         });
         editor = codeArea;
         textEditor = new VirtualizedScrollPane<>(codeArea);
@@ -68,6 +71,11 @@ public class BrainF extends Application {
         terminal.setMinWidth(300);
         terminal.setMaxWidth(300);
         terminal.setText(">>>\n");
+        terminal.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER && terminal.getCurrMode() == Terminal.Mode.EDIT){
+                menuBar.getInterpreter().getInput();
+            }
+        });
     }
 
     // Main
@@ -92,6 +100,21 @@ public class BrainF extends Application {
         borderPane.setRight(terminal);
 
         Scene scene = new Scene(borderPane);
+        scene.setOnKeyPressed(event -> {
+            if(newShortcut.match(event)){
+                menuBar.newFile();
+            }
+            else if(openShortcut.match(event)){
+                menuBar.openFile();
+            }
+            else if(saveShortcut.match(event)){
+                menuBar.saveFile(menuBar.getCurrentFile());
+            }
+
+            else if(event.getCode() == KeyCode.F5){
+                menuBar.runFile();
+            }
+        });
 
         // Define the Stage
         primaryStage.setMinWidth(900);
