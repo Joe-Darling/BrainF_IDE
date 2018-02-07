@@ -97,7 +97,8 @@ public class BrainF extends Application {
         primaryStage.setMinWidth(900);
         primaryStage.setMinHeight(900);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("[INSERT FILE NAME] - BrainF IDE");
+
+        menuBar.setMainSceneTitle();
         primaryStage.setResizable(false);
         primaryStage.show();
     }
