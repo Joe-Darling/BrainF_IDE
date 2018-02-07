@@ -38,6 +38,11 @@ public class BrainF extends Application {
         borderPane = new BorderPane();
     }
 
+    /**
+     * Creates the Toolbar for the IDE
+     *
+     * NOTE: Not included in MVP. Used for testing of functionality.
+     */
     public void createToolbar(){
         toolbar = new ToolBar();
 
@@ -50,6 +55,10 @@ public class BrainF extends Application {
         toolbar.getItems().addAll(save);
     }
 
+    /**
+     * Creates the code area for the IDE. Responsible for setting the codeModified boolean
+     * to true when the user Removes or Adds text.
+     */
     public void createTextEditor(){
         CodeArea codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
@@ -62,10 +71,17 @@ public class BrainF extends Application {
         textEditor.setMaxWidth(600);
     }
 
+    /**
+     * Creates the menu bar through creating the BrainFMenuBar class object.
+     * @param primaryStage
+     */
     public void createMenuBar(Stage primaryStage){
         menuBar = new BrainFMenuBar(primaryStage, editor, terminal);
     }
 
+    /**
+     * Creates the Terminal for the interpreter to output data to.
+     */
     public void createTerminal(){
         terminal = new Terminal();
         terminal.setMinWidth(300);
@@ -83,6 +99,11 @@ public class BrainF extends Application {
         launch(args);
     }
 
+    /**
+     * Creates the Scene and sets the Stage for the BrainF IDE. Initializes all the main components
+     * by calling the initialization methods.
+     * @param primaryStage
+     */
     @Override
     public void start(Stage primaryStage) {
         // Initialize
@@ -92,13 +113,16 @@ public class BrainF extends Application {
         createTerminal();
         createMenuBar(primaryStage);
 
+        // Creates the Menu Bar
         VBox vbox = new VBox();
         vbox.getChildren().addAll(menuBar.createMenuBar());
 
+        // sets border pane values
         borderPane.setTop(vbox);
         borderPane.setLeft(textEditor);
         borderPane.setRight(terminal);
 
+        // sets the OnKeyPressed events for the scene
         Scene scene = new Scene(borderPane);
         scene.setOnKeyPressed(event -> {
             if(newShortcut.match(event)){
