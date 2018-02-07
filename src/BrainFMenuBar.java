@@ -31,6 +31,7 @@ public class BrainFMenuBar {
     private Boolean codeModified; // if editor has been modified
     private SavePrompt savePrompt;
     private File currentFile;
+    private Interpreter interpreter;
 
     public BrainFMenuBar(Stage primaryStage, CodeArea textEditor, Terminal terminal){
         stage = primaryStage;
@@ -46,6 +47,14 @@ public class BrainFMenuBar {
 
     public void setCodeModified(Boolean bool){
         codeModified = bool;
+    }
+
+    public void setMainSceneTitle(){
+        stage.setTitle(getFileName() + TITLE);
+    }
+
+    public Interpreter getInterpreter(){
+        return interpreter;
     }
 
     public MenuBar createMenuBar(){
@@ -176,7 +185,7 @@ public class BrainFMenuBar {
     public void runFile(){
         terminal.clear();
         terminal.appendText(">>>\n");
-        Interpreter interpreter = new Interpreter(terminal, 1000, editor.getText());
+        interpreter = new Interpreter(terminal, 1000, editor.getText());
         interpreter.run();
     }
 
@@ -187,9 +196,5 @@ public class BrainFMenuBar {
         }
 
         return fileName;
-    }
-
-    public void setMainSceneTitle(){
-        stage.setTitle(getFileName() + TITLE);
     }
 }
